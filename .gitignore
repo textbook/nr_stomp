@@ -16,4 +16,4 @@ docs/build
 .idea/workspace.xml
 
 # Personal configuration
-/nr_stomp/config.cfg
+config.cfg

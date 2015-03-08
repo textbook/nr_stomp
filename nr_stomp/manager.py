@@ -13,11 +13,12 @@ FRAMES = Queue.Queue()
 def create(args):
     """Create the producer and consumer from arguments."""
     producer = NetworkRailClient(
-        frame_count=getattr(args, 'frame_count', None),
+        frame_count=getattr(args, 'frames', None),
         frame_queue=FRAMES,
         password=args.password,
+        queues=getattr(args, 'queues', []),
         username=args.username,
-        verbose=getattr(args, 'verbose', True),
+        verbose=getattr(args, 'verbose', False),
     )
     consumer = DummyFrameStore(FRAMES)
     return producer, consumer

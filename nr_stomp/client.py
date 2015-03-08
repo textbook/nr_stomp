@@ -74,6 +74,8 @@ class NetworkRailClient(threading.Thread):
 
     def run(self):
         """Monitor the feed."""
+        if not self._subscriptions:
+            raise AttributeError('No valid subscriptions.')
         if self.verbose:
             print 'Monitoring...'
         frame_count = count() if not self._count else xrange(self._count)
