@@ -16,7 +16,7 @@ def create(args):
         frame_count=getattr(args, 'frames', None),
         frame_queue=FRAMES,
         password=args.password,
-        queues=getattr(args, 'queues', []),
+        topics=getattr(args, 'topics', []),
         username=args.username,
         verbose=getattr(args, 'verbose', False),
     )
@@ -43,7 +43,7 @@ def run_demo(username):
             frame_count=10,
             frame_queue=FRAMES,
             password=getpass('Enter password: '),
-            queues='TRAIN_MVT_ALL_TOC',
+            topics='TRAIN_MVT_ALL_TOC',
         ),
         consumer=DummyFrameStore(FRAMES),
     )

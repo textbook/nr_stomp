@@ -59,6 +59,11 @@ class NetworkRailClient(threading.Thread):
             'timeout',
             0.8 * self.beat[0] / 1000.0,
         )
+        self.topics = config.get('topics', [])
+        if isinstance(self.topics, basestring):
+            self.topics = [self.topics]
+        if not self.topics:
+            raise AttributeError('No valid subscriptions.')
         self.username = username
         self.verbose = config.get('verbose', False)
         if self.verbose:
@@ -66,16 +71,14 @@ class NetworkRailClient(threading.Thread):
                 self.username,
                 self.timeout,
             )
-        self._connect()
         self._count = config.get('frame_count', self.COUNT)
         self._queue = config.get('frame_queue', Queue.Queue())
         self._subscriptions = {}
-        self._subscribe(config.get('queues', []))
 
     def run(self):
         """Monitor the feed."""
-        if not self._subscriptions:
-            raise AttributeError('No valid subscriptions.')
+        self._connect()
+        self._subscribe()
         if self.verbose:
             print 'Monitoring...'
         frame_count = count() if not self._count else xrange(self._count)
@@ -137,43 +140,24 @@ class NetworkRailClient(threading.Thread):
             info=frame.info(),
         )
 
-    def _subscribe(self, queues):
-        """Subscribe the client to one or more queues.
-
-        Arguments:
-          queues (str or seq): The queue or queues to _subscribe to.
-
-        """
-        if isinstance(queues, basestring):
-            queues = [queues]
-        for queue in queues:
+    def _subscribe(self):
+        """Subscribe the client to the specified topics."""
+        for topic in self.topics:
             try:
                 token = self.client.subscribe(
-                    '/topic/{}'.format(queue),
+                    '/topic/{}'.format(topic),
                     headers={
                         StompSpec.ACK_HEADER: StompSpec.ACK_CLIENT_INDIVIDUAL,
                         StompSpec.ID_HEADER: '{}-{}'.format(
                             self.username.partition('@')[0],
-                            queue,
+                            topic,
                         ),
                     },
                 )
             except StompProtocolError:
                 if self.verbose:
-                    print 'Subscription skipped: {!r}.'.format(queue)
+                    print 'Subscription skipped: {!r}.'.format(topic)
             else:
-                self._subscriptions[queue] = token
+                self._subscriptions[topic] = token
                 if self.verbose:
-                    print 'Subscribed to: {!r}.'.format(queue)
-
-    def _unsubscribe(self, queues):
-        """Remove subscriptions from subscribed queues."""
-        if isinstance(queues, basestring):
-            queues = [queues]
-        for queue in queues:
-            if queue in self._subscriptions:
-                if self.verbose:
-                    print 'Subscription to {!r} removed.'.format(queue)
-                self.client.unsubscribe(self._subscriptions[queue])
-            elif self.verbose:
-                print 'Unknown subscription: {!r}.'.format(queue)
+                    print 'Subscribed to: {!r}.'.format(topic)

@@ -11,7 +11,7 @@ from nr_stomp.manager import create, process
 SETTINGS = {
     'beat': (literal_eval, None),
     'frames': (int, None),
-    'queues': (literal_eval, None),
+    'topics': (literal_eval, []),
     'verbose': (bool, False),
 }
 
@@ -23,8 +23,8 @@ TEMPLATE = dedent(
     password:
 
     [settings]
-    # note that you must _subscribe to the queues you enter
-    queues: [
+    # note that you must _subscribe to the topics you enter
+    topics: [
        'TRAIN_MVT_ALL_TOC',
     #   'RTPPM_ALL',
        ]
@@ -87,7 +87,6 @@ def parse_config(args):
     config.read(args.config)
     args.username = config.get('credentials', 'username')
     args.password = config.get('credentials', 'password')
-    args.queues = literal_eval(config.get('settings', 'queues'))
     args.config = {}
     for option in config.options('settings'):
         opt = config.get('settings', option)
