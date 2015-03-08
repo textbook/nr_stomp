@@ -1,0 +1,19 @@
+*.py[cod]
+*.py-e
+htmlcov
+
+# Packages
+*.egg-info
+
+# Unit test / coverage reports
+.coverage
+
+# Built docs
+docs/build
+
+# PyCharm
+.idea/dictionaries
+.idea/workspace.xml
+
+# Personal configuration
+/nr_stomp/config.cfg
