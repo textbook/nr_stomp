@@ -1,6 +1,7 @@
 """Manage the appropriate client and store classes."""
 
 from getpass import getpass
+import logging
 import Queue
 
 from .client import NetworkRailClient
@@ -8,6 +9,7 @@ from .store import DummyFrameStore
 
 
 FRAMES = Queue.Queue()
+logger = logging.getLogger(__name__)
 
 
 def create(args):
@@ -18,7 +20,6 @@ def create(args):
         password=args.password,
         topics=getattr(args, 'topics', []),
         username=args.username,
-        verbose=getattr(args, 'verbose', False),
     )
     consumer = DummyFrameStore(FRAMES)
     return producer, consumer
@@ -26,13 +27,13 @@ def create(args):
 
 def process(producer, consumer):
     """Run the threaded processes."""
-    print 'Starting process...'
+    logger.info('Starting process...')
     producer.start()
     consumer.start()
     while producer.is_alive() or not FRAMES.empty():
         pass
     consumer.stop()
-    print 'Process complete.'
+    logger.info('Process complete.')
 
 
 def run_demo(username):

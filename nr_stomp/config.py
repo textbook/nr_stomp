@@ -12,7 +12,6 @@ SETTINGS = {
     'beat': (literal_eval, None),
     'frames': (int, None),
     'topics': (literal_eval, []),
-    'verbose': (bool, False),
 }
 
 TEMPLATE = dedent(
@@ -30,8 +29,6 @@ TEMPLATE = dedent(
        ]
     # number of frames to monitor (leave blank for unlimited)
     frames: 10
-    # whether to print information to the terminal
-    verbose: False
     """
 )
 

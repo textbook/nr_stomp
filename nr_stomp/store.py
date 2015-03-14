@@ -1,7 +1,11 @@
 """Functionality for storing the frames downloaded by the client."""
 
+import logging
 import Queue
 import threading
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseFrameStore(threading.Thread):
@@ -32,8 +36,8 @@ class BaseFrameStore(threading.Thread):
 
 
 class DummyFrameStore(BaseFrameStore):
-    """Just prints out the frame information."""
+    """Just logs the frame information."""
 
     def store(self, frame):
-        """Print frame information."""
-        print frame.info()
+        """Log frame information."""
+        logger.debug(frame.info())
